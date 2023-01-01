@@ -1,0 +1,197 @@
+# ################################
+# Model: X-vector
+# ################################
+
+
+#---------------------------------------------------------#
+# Input path
+#---------------------------------------------------------#
+data_folder: !PLACEHOLDER
+train_annotation: !ref <data_folder>/train.csv
+valid_annotation: !ref <data_folder>/dev.csv
+rir_folder: !ref <data_folder>
+out_n_neurons: 7205 #1211 for vox1  # 5994 for vox2, 7205 for vox1+vox2
+
+dataloader_options:
+    batch_size: !ref <batch_size>
+    shuffle: !ref <shuffle>
+    num_workers: 0
+
+
+#---------------------------------------------------------#
+# Output path
+#---------------------------------------------------------#
+seed: 1986
+__set_seed: !apply:torch.manual_seed [!ref <seed>]
+output_folder: !ref /content/drive/MyDrive/ntu_diar/module/train/x_vector
+save_folder: !ref <output_folder>/ckpt
+train_log: !ref <output_folder>/train_log.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+#---------------------------------------------------------#
+# Training parameters
+#---------------------------------------------------------#
+number_of_epochs: 20
+ckpt_interval_minutes: 15 # save checkpoint every N min
+batch_size: 256
+lr: 0.001
+lr_final: 0.0001
+sample_rate: 16000
+sentence_len: 3.0 # seconds
+shuffle: True
+random_chunk: True
+
+
+#---------------------------------------------------------#
+# Feature parameters
+#---------------------------------------------------------#
+n_mels: 24
+left_frames: 0
+right_frames: 0
+deltas: False
+
+
+#---------------------------------------------------------#
+# Main pipeline
+#---------------------------------------------------------#
+modules: 
+    compute_features: !ref <compute_features>
+    augment_wavedrop: !ref <augment_wavedrop>
+    augment_speed: !ref <augment_speed>
+    add_rev: !ref <add_rev>
+    add_noise: !ref <add_noise>
+    add_rev_noise: !ref <add_rev_noise>
+    embedding_model: !ref <embedding_model>
+    classifier: !ref <classifier>
+    mean_var_norm: !ref <mean_var_norm>
+
+
+#---------------------------------------------------------#
+# Augmentation pipeline
+#---------------------------------------------------------#
+augment_pipeline: [
+    !ref <augment_wavedrop>,
+    !ref <augment_speed>,
+    !ref <add_rev>,
+    !ref <add_noise>,
+    !ref <add_rev_noise>
+]
+
+# If concat_augment = False, the augmentation techniques are applied
+# in sequence. If concat_augment = True, all the augmented signals
+# are concatenated in a single big batch.
+
+concat_augment: True 
+
+
+#---------------------------------------------------------#
+# Pipeline Functions
+#---------------------------------------------------------#
+compute_features: !new:ntu_diar.scr.model.features.features.Fbank
+    n_mels: !ref <n_mels>
+    left_frames: !ref <left_frames>
+    right_frames: !ref <right_frames>
+    deltas: !ref <deltas>
+
+embedding_model: !new:ntu_diar.scr.model.nnet.x_vector.xvector.Xvector
+    in_channels: !ref <n_mels>
+    activation: !name:torch.nn.LeakyReLU
+    tdnn_blocks: 5
+    tdnn_channels: [512, 512, 512, 512, 1500]
+    tdnn_kernel_sizes: [5, 3, 3, 1, 1]
+    tdnn_dilations: [1, 2, 3, 1, 1]
+    lin_neurons: 512
+
+classifier: !new:ntu_diar.scr.model.nnet.x_vector.classifier.Classifier
+    input_shape: [null, null, 512]
+    activation: !name:torch.nn.LeakyReLU
+    lin_blocks: 1
+    lin_neurons: 512
+    out_neurons: !ref <out_n_neurons>
+
+epoch_counter: !new:ntu_diar.scr.utils.epoch_loop.EpochCounter
+    limit: !ref <number_of_epochs>
+
+augment_wavedrop: !new:ntu_diar.scr.model.augment.spec_augment.TimeDomainSpecAugment
+    sample_rate: !ref <sample_rate>
+    speeds: [100]
+
+augment_speed: !new:ntu_diar.scr.model.augment.spec_augment.TimeDomainSpecAugment
+    sample_rate: !ref <sample_rate>
+    speeds: [95, 100, 105]
+
+add_rev: !new:ntu_diar.scr.model.augment.env_corrupt.EnvCorrupt
+    openrir_folder: !ref <rir_folder>
+    openrir_max_noise_len: 3.0  # seconds
+    reverb_prob: 1.0
+    noise_prob: 0.0
+    noise_snr_low: 0
+    noise_snr_high: 15
+    rir_scale_factor: 1.0
+
+add_noise: !new:ntu_diar.scr.model.augment.env_corrupt.EnvCorrupt
+    openrir_folder: !ref <rir_folder>
+    openrir_max_noise_len: 3.0  # seconds
+    reverb_prob: 0.0
+    noise_prob: 1.0
+    noise_snr_low: 0
+    noise_snr_high: 15
+    rir_scale_factor: 1.0
+
+add_rev_noise: !new:ntu_diar.scr.model.augment.env_corrupt.EnvCorrupt
+    openrir_folder: !ref <rir_folder>
+    openrir_max_noise_len: 3.0  # seconds
+    reverb_prob: 1.0
+    noise_prob: 1.0
+    noise_snr_low: 0
+    noise_snr_high: 15
+    rir_scale_factor: 1.0
+
+mean_var_norm: !new:ntu_diar.scr.model.features.normalize.InputNormalization
+    norm_type: sentence
+    std_norm: False
+
+
+#---------------------------------------------------------#
+# Loss & Optimization & learning-rate
+#---------------------------------------------------------#
+compute_cost: !name:ntu_diar.scr.task.train.losses.nll_loss
+
+opt_class: !name:torch.optim.Adam
+    lr: !ref <lr>
+    weight_decay: 0.000002
+
+lr_annealing: !new:ntu_diar.scr.task.train.schedulers.LinearScheduler
+    initial_value: !ref <lr>
+    final_value: !ref <lr_final>
+    epoch_count: !ref <number_of_epochs>
+
+
+#---------------------------------------------------------#
+# Logging & checkpoints
+#---------------------------------------------------------#
+train_logger: !new:ntu_diar.scr.task.train.train_logger.FileTrainLogger
+    save_file: !ref <train_log>
+
+error_stats: !name:ntu_diar.scr.utils.metric_stats.MetricStats
+    metric: !name:ntu_diar.scr.task.train.losses.classification_error
+        reduction: batch
+
+checkpointer: !new:ntu_diar.scr.utils.checkpoints.Checkpointer
+    checkpoints_dir: !ref <save_folder>
+    recoverables:
+        embedding_model: !ref <embedding_model>
+        classifier: !ref <classifier>
+        normalizer: !ref <mean_var_norm>
+        counter: !ref <epoch_counter>

@@ -1,0 +1,60 @@
+# ############################################################################
+# Model: xvector 
+# ############################################################################
+
+# Feature parameters
+n_mels: 24
+
+# Pretrain folder
+pretrained_path: /content/drive/MyDrive/ntu_diar/module/pre_train/x_vector
+
+# Output parameters
+out_n_neurons: 7205
+
+# Model params
+compute_features: !new:ntu_diar.scr.model.features.features.Fbank
+    n_mels: !ref <n_mels>
+
+mean_var_norm: !new:ntu_diar.scr.model.features.normalize.InputNormalization
+    norm_type: sentence
+    std_norm: False
+
+embedding_model: !new:ntu_diar.scr.model.nnet.x_vector.xvector.Xvector
+    in_channels: !ref <n_mels>
+    activation: !name:torch.nn.LeakyReLU
+    tdnn_blocks: 5
+    tdnn_channels: [512, 512, 512, 512, 1500]
+    tdnn_kernel_sizes: [5, 3, 3, 1, 1]
+    tdnn_dilations: [1, 2, 3, 1, 1]
+    lin_neurons: 512
+
+classifier: !new:ntu_diar.scr.model.nnet.x_vector.classifier.Classifier
+    input_shape: [null, null, 512]
+    activation: !name:torch.nn.LeakyReLU
+    lin_blocks: 1
+    lin_neurons: 512
+    out_neurons: !ref <out_n_neurons>
+
+mean_var_norm_emb: !new:ntu_diar.scr.model.features.normalize.InputNormalization
+    norm_type: global
+    std_norm: False
+
+modules:
+    compute_features: !ref <compute_features>
+    mean_var_norm: !ref <mean_var_norm>
+    embedding_model: !ref <embedding_model>
+    mean_var_norm_emb: !ref <mean_var_norm_emb>
+    classifier: !ref <classifier>
+
+
+        
+pretrainer: !new:ntu_diar.scr.utils.parameter_transfer.Pretrainer
+    loadables:
+        embedding_model: !ref <embedding_model>
+        mean_var_norm_emb: !ref <mean_var_norm_emb>
+        classifier: !ref <classifier>
+    paths:
+        embedding_model: !ref <pretrained_path>/embedding_model.ckpt
+        mean_var_norm_emb: !ref <pretrained_path>/mean_var_norm_emb.ckpt
+        classifier: !ref <pretrained_path>/classifier.ckpt
+

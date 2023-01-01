@@ -1,0 +1,13 @@
+ID,duration,wav,start,stop,spk_id
+voxeleb1--1zcIwhmdeo4--00001_0.0_3.0,8.1200625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb1/1zcIwhmdeo4/00001.wav,0,48000,voxeleb1
+voxeleb1--1zcIwhmdeo4--00001_3.0_6.0,8.1200625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb1/1zcIwhmdeo4/00001.wav,48000,96000,voxeleb1
+voxeleb1--1zcIwhmdeo4--00002_0.0_3.0,8.5600625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb1/1zcIwhmdeo4/00002.wav,0,48000,voxeleb1
+voxeleb1--1zcIwhmdeo4--00002_3.0_6.0,8.5600625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb1/1zcIwhmdeo4/00002.wav,48000,96000,voxeleb1
+voxeleb1--1zcIwhmdeo4--00003_0.0_3.0,5.6000625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb1/1zcIwhmdeo4/00003.wav,0,48000,voxeleb1
+voxeleb2--7gWzIy6yIIk--00003_0.0_3.0,6.5600625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb2/7gWzIy6yIIk/00003.wav,0,48000,voxeleb2
+voxeleb2--7gWzIy6yIIk--00003_3.0_6.0,6.5600625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb2/7gWzIy6yIIk/00003.wav,48000,96000,voxeleb2
+voxeleb2--7gWzIy6yIIk--00004_0.0_3.0,8.1600625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb2/7gWzIy6yIIk/00004.wav,0,48000,voxeleb2
+voxeleb2--7gWzIy6yIIk--00004_3.0_6.0,8.1600625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb2/7gWzIy6yIIk/00004.wav,48000,96000,voxeleb2
+voxeleb2--7gWzIy6yIIk--00001_0.0_3.0,8.6400625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb2/7gWzIy6yIIk/00001.wav,0,48000,voxeleb2
+voxeleb2--7gWzIy6yIIk--00001_3.0_6.0,8.6400625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb2/7gWzIy6yIIk/00001.wav,48000,96000,voxeleb2
+voxeleb2--7gWzIy6yIIk--00002_0.0_3.0,5.9600625,/content/drive/MyDrive/speechbrain/recipes/VoxCeleb/SpeakerRec/dataset/voxeleb2/7gWzIy6yIIk/00002.wav,0,48000,voxeleb2

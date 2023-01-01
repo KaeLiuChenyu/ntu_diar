@@ -1,0 +1,55 @@
+# ############################################################################
+# Model: ECAPA TDNN for Diarization
+# ############################################################################
+
+# Feature parameters
+n_mels: 80
+
+# Pretrain folder 
+pretrained_path: /content/drive/MyDrive/ntu_diar/module/pre_train/ecapa_tdnn
+
+# Output parameters
+out_n_neurons: 7205
+
+# Model params
+compute_features: !new:ntu_diar.scr.model.features.features.Fbank
+    n_mels: !ref <n_mels>
+
+mean_var_norm: !new:ntu_diar.scr.model.features.normalize.InputNormalization
+    norm_type: sentence
+    std_norm: False
+
+embedding_model: !new:ntu_diar.scr.model.nnet.ecapa_tdnn.ecapa_tdnn.ECAPA_TDNN
+    input_size: !ref <n_mels>
+    channels: [1024, 1024, 1024, 1024, 3072]
+    kernel_sizes: [5, 3, 3, 3, 1]
+    dilations: [1, 2, 3, 4, 1]
+    attention_channels: 128
+    lin_neurons: 192
+
+classifier: !new:ntu_diar.scr.model.nnet.ecapa_tdnn.classifier.Classifier
+    input_size: 192
+    out_neurons: !ref <out_n_neurons>
+
+mean_var_norm_emb: !new:ntu_diar.scr.model.features.normalize.InputNormalization
+    norm_type: global
+    std_norm: False
+
+modules:
+    compute_features: !ref <compute_features>
+    mean_var_norm: !ref <mean_var_norm>
+    embedding_model: !ref <embedding_model>
+    mean_var_norm_emb: !ref <mean_var_norm_emb>
+    classifier: !ref <classifier>
+        
+
+        
+pretrainer: !new:ntu_diar.scr.utils.parameter_transfer.Pretrainer
+    loadables:
+        embedding_model: !ref <embedding_model>
+        mean_var_norm_emb: !ref <mean_var_norm_emb>
+        classifier: !ref <classifier>
+    paths:
+        embedding_model: !ref <pretrained_path>/embedding_model.ckpt
+        mean_var_norm_emb: !ref <pretrained_path>/mean_var_norm_emb.ckpt
+        classifier: !ref <pretrained_path>/classifier.ckpt

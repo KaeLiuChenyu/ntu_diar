@@ -1,0 +1,40 @@
+# ################################
+# Inference: Sincnet_Xvector
+# ################################
+
+
+#---------------------------------------------------------#
+# VAD & Embedding path
+#---------------------------------------------------------#
+pipeline:
+  name: infer_scr.infer_sincnet_ecapa.InferTask
+  params:
+    segmentation_ckpt: /content/drive/MyDrive/ntu_diar/module/pre_train/sincnet/segmentation_model.ckpt
+    embedding_ckpt: /content/drive/MyDrive/ntu_diar/module/pre_train/x_vector
+    embedding_cfg: /content/drive/MyDrive/ntu_diar/task/Inference/sincnet_ecapa/config/x_vector.yaml
+    clustering: HiddenMarkovModelClustering
+    segmentation_onset: 0.58
+    segmentation_step: 0.1
+    segmentation_batch_size: 32
+    segmentataion_duration: 5.0
+    embedding_batch_size: 32
+    embedding_exclude_overlap: False
+    fs: 16000
+    out_channel: 512
+
+#---------------------------------------------------------#
+# Clustering
+#---------------------------------------------------------#
+params:
+  clustering:
+    covariance_type: diag
+    threshold: 0.01
+    single_cluster_detection:
+      quantile: 0.01
+      threshold: 0.4
+
+#---------------------------------------------------------#
+# In/Out path
+#---------------------------------------------------------#
+input_audio: /content/drive/MyDrive/ntu_diar/task/Inference/silero_xvector/data/test_16k.wav
+pre_rttm: /content/drive/MyDrive/ntu_diar/task/Inference/sincnet_ecapa/result/pre.rttm

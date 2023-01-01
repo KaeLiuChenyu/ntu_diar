@@ -1,0 +1,37 @@
+# ################################
+# Inference: X-vector_SC
+# ################################
+
+
+#---------------------------------------------------------#
+# VAD path
+#---------------------------------------------------------#
+vad_params: 
+vad_folder: /content/drive/MyDrive/ntu_diar/module/pre_train/silero/silero_vad.jit
+
+vad_model: !new:ntu_diar.scr.model.nnet.silero.silero.silero_vad
+    path: !ref <vad_folder>
+
+
+#---------------------------------------------------------#
+# Embedding path
+#---------------------------------------------------------#
+embedding_params: /content/drive/MyDrive/ntu_diar/task/Inference/silero_xvector/config/hyperparams.yaml
+embedding_folder: /content/drive/MyDrive/ntu_diar/module/pre_train/x_vector
+    
+embedding_model: !new:ntu_diar.scr.task.infer.embedding.Embedding_model
+    hparams_local_path: !ref <embedding_params>
+    model_local_path: !ref <embedding_folder>
+    
+
+#---------------------------------------------------------#
+# Clustering
+#---------------------------------------------------------#
+clustering: !name:ntu_diar.scr.model.cluster.spectral_clustering.cluster_SC
+
+
+#---------------------------------------------------------#
+# In/Out path
+#---------------------------------------------------------#
+input_audio: /content/drive/MyDrive/ntu_diar/task/Inference/silero_xvector/data/test_16k.wav
+pre_rttm: /content/drive/MyDrive/ntu_diar/task/Inference/silero_xvector/result/pre.rttm
