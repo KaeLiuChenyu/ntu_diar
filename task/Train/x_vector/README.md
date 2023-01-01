@@ -15,7 +15,7 @@ Main script:
    5. run.py
 
 >i.config
->>
+>>config files
 
 >ii.data
 >>.csv files containing data information
