@@ -5,7 +5,6 @@ Infer silero-xvector
 ****
 
 # Folders for Infer silero-xvector
-## **config**
 Main script:
 1. ntu_diar/task/Inference/x_vector
    1. config
@@ -26,8 +25,14 @@ Main script:
 >v.run.py
 >>Main script. 
 
-## **Usage**
 
+## **Usage**
+First:
+```
+Modify embedding model/VAD model/test audio/.../path in the config file
+```
+Second:
 ```
 python ./run.py config/config.yaml
 ```
+
