@@ -60,8 +60,8 @@ The attached scripts, such as the preparation of data sets:
 
 # Usage
 
-## **Train**
-Check ntu_diar/task/Train/x_vector 0505050
+## **Train X-vector**
+Please check [ntu_diar/task/Train/x_vector](https://github.com/KaeLiuChenyu/ntu_diar/tree/main/task/Train/x_vector)
 
 ## **Inference**
-Check ntu_diar/task/Inference/silero_xvector
+Please check [ntu_diar/task/inference/silero_xvector](https://github.com/KaeLiuChenyu/ntu_diar/tree/main/task/Inference/silero_xvector)

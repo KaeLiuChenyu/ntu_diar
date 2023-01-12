@@ -36,7 +36,7 @@ Main script:
 
 
 ## **Usage**
-
+Step 1:
 ```
 python ./run.py config/train_x_vectors.yaml --data_folder=data
 ```
