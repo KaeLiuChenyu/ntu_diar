@@ -27,11 +27,15 @@ Main script:
 
 
 ## **Usage**
-First:
+Step 1(Modify config.yaml):
 ```
-Modify embedding model/VAD model/test audio/.../path in the config file
+vad_folder: path/to/vad/model/file
+embedding_params: path/to/embedding/config/file
+embedding_folder: path/to/embedding/model/file
+input_audio: path/to/test/audo
+pre_rttm: path/to/output/rttm
 ```
-Second:
+Step 2:
 ```
 python ./run.py config/config.yaml
 ```
