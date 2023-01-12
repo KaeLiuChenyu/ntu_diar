@@ -61,7 +61,7 @@ The attached scripts, such as the preparation of data sets:
 # Usage
 
 ## **Train**
-Check ntu_diar/task/Train/x_vector
+Check ntu_diar/task/Train/x_vector 0505050
 
 ## **Inference**
 Check ntu_diar/task/Inference/silero_xvector
